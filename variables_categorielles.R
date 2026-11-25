@@ -1,33 +1,44 @@
 ## Traitement des données catégorielles
 library(data.table)
 
-source("./clean_data.R")
 source("./categories_ind.R")
 
-films <- read.csv("data/films.rds")
+films <- readRDS("./data/films.rds")
 
 ## Genres ---
-data_genres <- categories_ind("genres", films)
+
+data_genres <- categories_ind("genres", films, 50)
 
 ## Compagnie de production ---
-data_prod <- categories_ind("production_companies", films)
 
-# Il y a 8 000 catégories différentes WTF
-# Que faire avec les catégories qui ont une variable ou très peu? Les enlever?
+data_prod <- categories_ind("production_companies", films, 100)
 
 ## Langue originale ---
-data_langue <- categories_ind("original_language", films)
 
-## IA ---
-install.packages("ISOcodes")
-library(ISOcodes)
+data_langues <- categories_ind("original_language", films, 50)
 
-langues <- ISO_639_2[!is.na(ISO_639_2$Alpha_2), c("Alpha_2", "Name")]
-names(langues) <- c("original_language", "langue_nom")
+# --- IA : Claude a été utilisé pour proposer ce bloc ---
+# Utilisation : association des codes de langues en noms complets
+# Vérification : résultats vérifiés par l'équipe
 
-data_langue <- merge(data_langue, langues, by = "original_language", all.x = TRUE)
+noms_langues <- c(en = "English", ko = "Korean", fr = "French", ja = "Japanese",
+                  it = "Italian", es = "Spanish", hi = "Hindi", zh = "Chinese",
+                  ru = "Russian")
 
-data_langue$langue_nom[data_langue$original_language == "cn"] <- "Cantonese"
-data_langue$langue_nom <- sub(";.*", "", data_langue$langue_nom)
-# ---
+anciens <- intersect(names(noms_langues), names(data_langues))
+setnames(data_langues, anciens, noms_langues[anciens])
+
+# --- Fin du bloc d'aide par l'IA ---
+
+caracteristiques <- names(films)
+
+variables <- merge.data.frame(data_genres,
+                              data_prod,
+                              by = caracteristiques)
+
+variables <- merge.data.frame(variables,
+                              data_langues,
+                              by = caracteristiques)
+
+saveRDS(variables, "./data/variables.rds")
 
