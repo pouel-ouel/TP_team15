@@ -32,6 +32,8 @@ setnames(data_langues, anciens, noms_langues[anciens])
 
 caracteristiques <- names(films)
 
+# Regrouper toutes les informations en un seul tableau
+
 variables <- merge.data.frame(data_genres,
                               data_prod,
                               by = caracteristiques)
@@ -39,6 +41,8 @@ variables <- merge.data.frame(data_genres,
 variables <- merge.data.frame(variables,
                               data_langues,
                               by = caracteristiques)
+
+# Sauvegarder les variables regroupées nécessaires pour le modèle
 
 saveRDS(variables, "./data/variables.rds")
 
