@@ -35,3 +35,13 @@ model  <- lm(formule, data = variables)
 summary(model)
 
 # --- Fin du bloc d'aide par l'IA ---
+
+## Regarder les 4 graphiques pour l'analyse et les commenter
+# 1. Linéarité et homoscédasticité (résidus en fonction des valeurs prédites)
+# 2. Normalité des résidus (quantiles normaux des résidus en fonction des valeurs prédites)
+# 3. Homoscédasticité (racine carrés de la valeur absolue des résidus en fonction des valeurs prédites)
+# 4. Résidus vs levier
+
+# La théorie est principalement dans le cours 7
+
+plot(model)
